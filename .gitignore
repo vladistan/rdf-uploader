@@ -1,0 +1,25 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+coverage.xml
+*.cover
+.pytest_cache/
+
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+
+# VS Code
+.vscode/
+
+/.coverage
+/tests/.coverage
+.envrc
