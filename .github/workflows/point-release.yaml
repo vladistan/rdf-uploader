@@ -1,0 +1,31 @@
+name: Point release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  point-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12.4'
+          cache: 'pip'
+      - name: Survey repo
+        id: survey-repo
+        run: |
+            ./ci/survey_repo.sh
+      - name: Install dependencies
+        run: |
+          pip install hatch uv
+      - name: Build Python Package
+        run: |
+          echo "VERSION = \"${{ steps.survey-repo.outputs.version }}\"" > src/rdf_uploader/__about__.py
+          hatch build

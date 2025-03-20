@@ -62,11 +62,12 @@ async def run_endpoint_test(
     skip_message: str | None = None,
     store_name: str | None = None,
 ) -> None:
-    
     # Skip test if endpoint is not enabled
     if not enabled:
-        pytest.skip(skip_message or f"{endpoint_type.value.capitalize()} tests are disabled")
-   
+        pytest.skip(
+            skip_message or f"{endpoint_type.value.capitalize()} tests are disabled"
+        )
+
     # Create a stats collector
     stats = StatsCollector()
 
@@ -224,7 +225,12 @@ async def test_upload_rdf_file_to_blazegraph(
 
 @pytest.mark.asyncio()
 async def test_upload_rdf_file_to_rdfox(
-    sample_nq_file, rdfox_endpoint, rdfox_username, rdfox_password, rdfox_store_name, rdfox_enabled
+    sample_nq_file,
+    rdfox_endpoint,
+    rdfox_username,
+    rdfox_password,
+    rdfox_store_name,
+    rdfox_enabled,
 ):
     """Test uploading a single RDF file to RDFox."""
     await run_endpoint_test(

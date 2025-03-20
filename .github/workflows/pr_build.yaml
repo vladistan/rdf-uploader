@@ -1,0 +1,42 @@
+name: PR Build
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  pr-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Run survey repo script
+        id: survey-repo
+        run: |
+          ./ci/survey_repo.sh
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12.4'
+          cache: 'pip'
+      - name: Install dependencies
+        run: |
+          pip install hatch uv
+      - name: Build Python Package
+        run: |
+          echo "VERSION = \"${{ steps.survey-repo.outputs.version }}\"" > src/rdf_uploader/__about__.py
+          hatch build
+      - name: Upload Source Distribution
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-package-sdist
+          path: dist/*.tar.gz
+          retention-days: 4
+      - name: Upload Wheel Distribution
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-package-wheel
+          path: dist/*.whl
+          retention-days: 4

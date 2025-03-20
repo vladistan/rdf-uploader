@@ -21,26 +21,6 @@ Introducing `rdf_uploader`, a single tool that can upload RDF data to a variety 
 pip install rdf-uploader
 ```
 
-### Using uv (faster installation)
-
-```bash
-uv install rdf-uploader
-```
-
-### Development Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/rdf-uploader.git
-cd rdf-uploader
-
-# Install with development dependencies
-pip install -e ".[dev]"
-
-# Or with uv
-uv install -e ".[dev]"
-```
-
 ## Usage
 
 ### Basic Usage
@@ -48,7 +28,7 @@ uv install -e ".[dev]"
 Upload a single RDF file to a SPARQL endpoint:
 
 ```bash
-rdf-uploader upload path/to/file.ttl --endpoint http://localhost:3030/dataset/sparql
+rdf-uploader path/to/file.ttl --endpoint http://localhost:3030/dataset/sparql
 ```
 
 ### Multiple Files
@@ -129,20 +109,6 @@ rdf-uploader --help
 rdf-uploader upload --help
 ```
 
-## Testing
-
-The project uses pytest for testing. Tests are designed to work with live test databases.
-
-```bash
-# Run all tests
-pytest
-
-# Run specific test file
-pytest tests/test_uploader.py
-
-# Run with verbose output
-pytest -v
-```
 
 ### Test Configuration
 
@@ -151,28 +117,6 @@ Tests use a local SPARQL endpoint by default. You can configure the test endpoin
 ```bash
 export TEST_ENDPOINT_URL=http://localhost:3030/test
 export TEST_ENDPOINT_TYPE=fuseki
-```
-
-## Development
-
-### Code Quality
-
-The project uses ruff for linting and formatting:
-
-```bash
-# Run linting
-ruff check .
-
-# Run formatting
-ruff format .
-```
-
-### Type Checking
-
-The project uses mypy for type checking:
-
-```bash
-mypy src tests
 ```
 
 ## License

@@ -1,0 +1,60 @@
+name: Minor release
+
+on:
+  push:
+    tags:
+      - v0.*
+
+permissions:
+  contents: write
+
+
+jobs:
+  minor-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Survey repo
+        id: survey-repo
+        run: |
+            ./ci/survey_repo.sh
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12.4'
+          cache: 'pip'
+      - name: Build Python Package
+        run: |
+          echo "VERSION = \"${{ steps.survey-repo.outputs.version }}\"" > src/rdf_uploader/__about__.py
+          pip install hatch uv
+          hatch build
+  version-bump:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 50
+      - name: Survey repo
+        id: survey-repo
+        run: |
+          ./ci/survey_repo.sh
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12.4'
+          cache: 'pip'
+      - name: Version bump
+        run: |
+          echo "VERSION = \"${{ steps.survey-repo.outputs.version }}\"" > src/rdf_uploader/__about__.py
+          pip install uv hatch
+          hatch version minor,dev
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git add src/rdf_uploader/__about__.py
+          NEW_VERSION=$(hatch version)
+          git commit -m "Bump version to ${NEW_VERSION}"
+          git push origin HEAD:main

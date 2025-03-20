@@ -56,7 +56,7 @@ def neptune_enabled() -> bool:
 
 @pytest.fixture()
 def neptune_endpoint() -> str:
-    return get_credential( "NEPTUNE_ENDPOINT")
+    return get_credential("NEPTUNE_ENDPOINT")
 
 
 @pytest.fixture()
