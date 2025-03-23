@@ -1,10 +1,8 @@
 name: Point release
-
 on:
   push:
     branches:
       - main
-
 jobs:
   point-release:
     runs-on: ubuntu-latest

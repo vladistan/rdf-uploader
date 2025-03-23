@@ -1,14 +1,10 @@
 name: Minor release
-
 on:
   push:
     tags:
       - v0.*
-
 permissions:
   contents: write
-
-
 jobs:
   minor-release:
     runs-on: ubuntu-latest

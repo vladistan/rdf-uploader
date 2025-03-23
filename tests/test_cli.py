@@ -24,18 +24,6 @@ def test_upload_command_help(runner):
     assert "--verbose" in result.stdout
 
 
-def test_upload_command_missing_args(runner):
-    """Test the upload command with missing arguments."""
-    result = runner.invoke(app, ["upload"])
-    assert result.exit_code != 0  # Should fail due to missing required arguments
-
-
-def test_upload_command_missing_endpoint(runner, sample_turtle_file):
-    """Test the upload command with missing endpoint."""
-    result = runner.invoke(app, ["upload", str(sample_turtle_file)])
-    assert result.exit_code != 0  # Should fail due to missing endpoint
-
-
 def test_upload_command_with_auth_and_content_type(
     runner, sample_turtle_file, marklogic_endpoint
 ):

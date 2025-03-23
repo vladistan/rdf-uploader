@@ -54,7 +54,7 @@ class StatsCollector:
 
 async def upload_rdf_file(
     file_path: Path,
-    endpoint: str,
+    endpoint: str | None = None,
     endpoint_type: EndpointType = EndpointType.GENERIC,
     graph: str | None = None,
     username: str | None = None,
@@ -64,6 +64,24 @@ async def upload_rdf_file(
     stats_callback: Callable[[dict[str, Any]], None] | None = None,
     store_name: str | None = None,
 ) -> bool:
+    """
+    Upload a single RDF file to a SPARQL endpoint.
+
+    Args:
+        file_path: Path to the RDF file to upload
+        endpoint: SPARQL endpoint URL (optional, can be read from environment variables)
+        endpoint_type: Type of SPARQL endpoint
+        graph: Named graph to upload to
+        username: Username for authentication (optional, can be read from environment variables)
+        password: Password for authentication (optional, can be read from environment variables)
+        content_type: Content type for RDF data (optional, auto-detected if not provided)
+        batch_size: Number of triples per batch for streaming formats
+        stats_callback: Callback function for upload statistics
+        store_name: RDFox datastore name (only used with RDFox endpoint type)
+
+    Returns:
+        True if the upload was successful
+    """
     detected_content_type = content_type or detect_content_type(file_path)
 
     client = EndpointClient(
@@ -94,7 +112,7 @@ async def upload_rdf_file(
 
 async def upload_rdf_files(
     files: list[Path],
-    endpoint: str,
+    endpoint: str | None = None,
     endpoint_type: EndpointType = EndpointType.GENERIC,
     graph: str | None = None,
     concurrent_limit: int = 5,
@@ -106,6 +124,26 @@ async def upload_rdf_files(
     stats_callback: Callable[[dict[str, Any]], None] | None = None,
     store_name: str | None = None,
 ) -> dict[Path, dict[str, Any]]:
+    """
+    Upload multiple RDF files to a SPARQL endpoint with concurrency control.
+
+    Args:
+        files: List of paths to RDF files to upload
+        endpoint: SPARQL endpoint URL (optional, can be read from environment variables)
+        endpoint_type: Type of SPARQL endpoint
+        graph: Named graph to upload to
+        concurrent_limit: Maximum number of concurrent uploads
+        progress_callback: Callback function for overall progress
+        username: Username for authentication (optional, can be read from environment variables)
+        password: Password for authentication (optional, can be read from environment variables)
+        content_type: Content type for RDF data (optional, auto-detected if not provided)
+        batch_size: Number of triples per batch for streaming formats
+        stats_callback: Callback function for upload statistics
+        store_name: RDFox datastore name (only used with RDFox endpoint type)
+
+    Returns:
+        Dictionary mapping file paths to upload results
+    """
     results: dict[Path, dict[str, Any]] = {}
     semaphore = asyncio.Semaphore(concurrent_limit)
 

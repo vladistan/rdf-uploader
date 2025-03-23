@@ -3,8 +3,10 @@ from abc import ABC, abstractmethod
 
 import httpx
 
+from rdf_uploader.utils import get_env_value
 
-class EndpointType(str, enum.Enum):
+
+class EndpointType(str, enum.Enum):  # noqa: UP042 # TODO: fix later
     GENERIC = "generic"
     BLAZEGRAPH = "blazegraph"
     MARKLOGIC = "marklogic"
@@ -152,7 +154,7 @@ def create_endpoint_strategy(
 class EndpointClient:
     def __init__(
         self,
-        endpoint_url: str,
+        endpoint_url: str | None = None,
         endpoint_type: EndpointType = EndpointType.GENERIC,
         timeout: int = 60,
         username: str | None = None,
@@ -161,24 +163,59 @@ class EndpointClient:
         store_name: str | None = None,
     ) -> None:
         self._endpoint_type = endpoint_type
+
         self._endpoint_url = endpoint_url
         self._timeout: int = timeout
         self._username: str | None = username
         self._password: str | None = password
         self._store_name: str | None = store_name
         self.content_type: str | None = content_type
+        if not self._endpoint_url:
+            self._endpoint_url = get_env_value("RDF_ENDPOINT")
+
+            if not self._endpoint_url:
+                env_var = f"{endpoint_type.value.upper()}_ENDPOINT"
+                self._endpoint_url = get_env_value(env_var)
+
+        if not self._endpoint_url:
+            raise ValueError(  # noqa: TRY003
+                "No endpoint URL provided and no environment variable found"
+            )
+
+        self._username = username
+        if not self._username:
+            self._username = get_env_value("RDF_USERNAME")
+
+            if not self._username:
+                env_var = f"{endpoint_type.value.upper()}_USERNAME"
+                self._username = get_env_value(env_var)
+
+        self._password = password
+        if not self._password:
+            self._password = get_env_value("RDF_PASSWORD")
+
+            if not self._password:
+                env_var = f"{endpoint_type.value.upper()}_PASSWORD"
+                self._password = get_env_value(env_var)
+
+        self._store_name = store_name
+        if not self._store_name and endpoint_type == EndpointType.RDFOX:
+            self._store_name = get_env_value("RDFOX_STORE_NAME")
+
+        self._timeout = timeout
+        self.content_type = content_type
 
         self.endpoint_strategy = create_endpoint_strategy(
             endpoint_type=endpoint_type,
-            endpoint_url=endpoint_url,
+            endpoint_url=self._endpoint_url,
             timeout=timeout,
-            username=username,
-            password=password,
-            store_name=store_name,
+            username=self._username,
+            password=self._password,
+            store_name=self._store_name,
         )
 
     @property
-    def endpoint_url(self) -> str:
+    def endpoint_url(self) -> str | None:
         return self._endpoint_url
 
     @property

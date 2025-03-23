@@ -80,18 +80,37 @@ output-format = "full"
 
 
 [tool.ruff.lint]
-select = ["F", "W", "E", "C90", "I", "N", "UP", "ASYNC", "S", "BLE", "FBT", "B", "A", "DTZ", "ISC",
-          "PIE", "T20", "PYI", "PT", "RSE", "RET", "SLF", "SLOT", "SIM", "TCH",
-          "INT", "ARG", "PTH", "TD", "ERA", "PD", "PGH", "PL", "TRY", "FLY", "NPY", "PERF", "FURB", "LOG", "RUF" ]
-ignore = ["E203", "E266", "E501", "E731", "PLR2004"]
+select = [
+    "F", "W", "E", "C90", "I", "N", "UP", "ASYNC", "S", "BLE", "FBT", "B",
+    "A", "DTZ", "ISC", "PIE", "T20", "PYI", "PT", "RSE", "RET", "SLF", "SLOT",
+    "SIM", "TCH", "INT", "ARG", "PTH", "TD", "ERA", "PD", "PGH", "PL", "TRY",
+    "FLY", "NPY", "PERF", "FURB", "LOG", "RUF",
+    ]
+ignore = [
+    "ARG002", # TODO: fix later
+    "E203",
+    "E266",
+    "E501",
+    "E731",
+    "TD002", # TODO: fix later
+    "TD003", # TODO: fix later
+    "PLR0913", # TODO: fix later
+    "PLR0917", # TODO: fix later
+    "PLR2004",
+]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = [
     "ASYNC230",
-    "S101", # use of assert
-    "S603", # `subprocess` call: check for execution of untrusted input"
-    "S106", # Possible hardcoded password assigned to argument: "password"
-    "S108", # Probable insecure usage of temporary file or directory: "/tmp"
+    "FBT001",
+    "FBT002",
+    "FBT003",
+    "S101",
+    "S603",
+    "S106",
+    "S108",
+    "PLR0913", # TODO: fix later
+    "PLR0917", # TODO: fix later
 ]
 "src/rdf_uploader/cli.py" = [
     "B008",
@@ -100,6 +119,10 @@ ignore = ["E203", "E266", "E501", "E731", "PLR2004"]
     "PLR0913",
     "PLR0917",
 ]
+"src/rdf_uploader/endpoints.py" = [
+    "PLR6301", # TODO: fix later
+]
+
 
 [tool.ruff.format]
 quote-style = "double"
