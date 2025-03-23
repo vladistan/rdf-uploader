@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 from typing import Any
 
+import click
 import typer
 from rich.console import Console
 from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn
@@ -22,7 +23,12 @@ def upload(
     files: list[Path] = typer.Argument(
         ..., help="RDF files to upload (N3, Turtle, RDF/XML, etc.)"
     ),
-    endpoint: str = typer.Option(..., "--endpoint", "-e", help="SPARQL endpoint URL"),
+    endpoint: str | None = typer.Option(
+        None,
+        "--endpoint",
+        "-e",
+        help="SPARQL endpoint URL (can be read from environment variables)",
+    ),
     endpoint_type: EndpointType = typer.Option(
         EndpointType.GENERIC,
         "--type",
@@ -58,7 +64,7 @@ def upload(
         "-v",
         help="Enable verbose output showing batch details and server responses",
     ),
-    store_name: str = typer.Option(
+    store_name: str | None = typer.Option(
         os.environ.get("RDFOX_STORE_NAME", ""),
         "--store-name",
         "-s",
@@ -134,7 +140,7 @@ def upload(
 @app.command()
 def version() -> None:
     """Print the version of the RDF Uploader."""
-    print(f"RDF Uploader {VERSION}")
+    click.echo(f"RDF Uploader {VERSION}")
 
 
 def main() -> None:

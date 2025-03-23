@@ -31,6 +31,55 @@ Upload a single RDF file to a SPARQL endpoint:
 rdf-uploader path/to/file.ttl --endpoint http://localhost:3030/dataset/sparql
 ```
 
+You can also omit the endpoint URL and use environment variables:
+
+```bash
+# Set the endpoint URL in an environment variable
+export RDF_ENDPOINT=http://localhost:3030/dataset/sparql
+
+# Then run without the --endpoint parameter
+rdf-uploader path/to/file.ttl
+```
+
+Or specify the endpoint type to use a type-specific environment variable:
+
+```bash
+# Set endpoint-specific URL
+export MARKLOGIC_ENDPOINT=http://marklogic-server:8000/v1/graphs
+
+# Use the endpoint type to determine which environment variable to use
+rdf-uploader path/to/file.ttl --type marklogic
+```
+
+### Programmatic Usage
+
+You can also use the library programmatically in your Python code:
+
+```python
+from pathlib import Path
+from rdf_uploader.uploader import upload_rdf_file
+from rdf_uploader.endpoints import EndpointType
+
+# The endpoint URL, username, and password can be provided directly
+# or read from environment variables if not specified
+await upload_rdf_file(
+    file_path=Path("path/to/file.ttl"),
+    endpoint="http://localhost:3030/dataset/sparql",
+    endpoint_type=EndpointType.GENERIC,
+    username="myuser",
+    password="mypass"
+)
+
+# Using environment variables
+# export RDF_ENDPOINT=http://localhost:3030/dataset/sparql
+# export RDF_USERNAME=myuser
+# export RDF_PASSWORD=mypass
+await upload_rdf_file(
+    file_path=Path("path/to/file.ttl"),
+    endpoint_type=EndpointType.GENERIC
+)
+```
+
 ### Multiple Files
 
 Upload multiple RDF files:
@@ -64,6 +113,22 @@ For endpoints that require authentication:
 
 ```bash
 rdf-uploader upload path/to/file.ttl --endpoint http://localhost:3030/dataset/sparql --username myuser --password mypass
+```
+
+You can also set authentication credentials using environment variables:
+
+```bash
+export RDF_USERNAME=myuser
+export RDF_PASSWORD=mypass
+rdf-uploader upload path/to/file.ttl --endpoint http://localhost:3030/dataset/sparql
+```
+
+For endpoint-specific credentials, use the endpoint type as a prefix:
+
+```bash
+export MARKLOGIC_USERNAME=mluser
+export MARKLOGIC_PASSWORD=mlpass
+rdf-uploader upload path/to/file.ttl --endpoint http://marklogic-server:8000/v1/graphs --type marklogic
 ```
 
 ### Content Type
@@ -109,6 +174,50 @@ rdf-uploader --help
 rdf-uploader upload --help
 ```
 
+
+### Environment Variables
+
+You can configure the RDF Uploader using environment variables, which is especially useful for CI/CD pipelines or when working with multiple endpoints. The library also supports reading values from a `.envrc` file in the current working directory if environment variables are not set:
+
+#### Endpoint URLs
+
+```bash
+# Generic endpoint URL
+export RDF_ENDPOINT=http://localhost:3030/dataset/sparql
+
+# Endpoint-specific URLs
+export MARKLOGIC_ENDPOINT=http://marklogic-server:8000/v1/graphs
+export NEPTUNE_ENDPOINT=https://your-neptune-instance.amazonaws.com:8182/sparql
+export BLAZEGRAPH_ENDPOINT=http://blazegraph-server:9999/blazegraph/sparql
+export RDFOX_ENDPOINT=http://rdfox-server:12110/datastores/default/content
+export STARDOG_ENDPOINT=https://your-stardog-instance:5820/database
+```
+
+#### Authentication
+
+```bash
+# Generic credentials
+export RDF_USERNAME=myuser
+export RDF_PASSWORD=mypass
+
+# Endpoint-specific credentials
+export MARKLOGIC_USERNAME=mluser
+export MARKLOGIC_PASSWORD=mlpass
+export NEPTUNE_USERNAME=neptuneuser
+export NEPTUNE_PASSWORD=neptunepass
+export BLAZEGRAPH_USERNAME=bguser
+export BLAZEGRAPH_PASSWORD=bgpass
+export RDFOX_USERNAME=rdfoxuser
+export RDFOX_PASSWORD=rdfoxpass
+export STARDOG_USERNAME=sduser
+export STARDOG_PASSWORD=sdpass
+```
+
+#### RDFox Store Name
+
+```bash
+export RDFOX_STORE_NAME=mystore
+```
 
 ### Test Configuration
 

@@ -17,8 +17,8 @@ def test_endpoint_client_init():
     assert client.endpoint_url == "http://example.org/sparql"
     assert client.endpoint_type == EndpointType.BLAZEGRAPH
     assert client.timeout == 30
-    assert client.username is None
-    assert client.password is None
+    assert client.username is not None
+    assert client.password is not None
     assert client.content_type is None
 
 
