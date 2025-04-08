@@ -45,15 +45,34 @@ gitRepo
 
 
 VERSION="${VCS_TAG#v}.${VCS_TICK}"
+
+# Add -local and timestamp to version if running locally (not in GitHub Actions)
+if [ -z "$GITHUB_ACTION" ]; then
+    TIMESTAMP=$(date +"%Y%m%d%H%M%S")
+    VERSION="${VERSION}-local${TIMESTAMP}"
+fi
+
 if [ "$VCS_WC_MODIFIED" == 1 ]; then
     VERSION="${VERSION}-dirty"
 fi
 
-cat <<EOF
+# Add PR number to version string if this is a pull request
+if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
+    # Extract PR number from GITHUB_REF
+    PR_NUMBER=$(echo $GITHUB_REF | sed -n 's/refs\/pull\/\([0-9]*\)\/merge/\1/p')
+    if [ -n "$PR_NUMBER" ]; then
+        VERSION="${VERSION}-pr${PR_NUMBER}"
+        VERSION_2="${VERSION}-g${VCS_SHORT_HASH}"
+    fi
+fi
 
-  /\_/\     Version   : ${VERSION}
+cat <<EOF
+  /\_/\     Version   : ${VERSION} 
  ( o.o )    Commit    : ${VCS_SHORT_HASH}
   > ^ <     
-            
 
 EOF
+
+if [ -n "$VERSION_2" ]; then
+    echo "Extra Version   : ${VERSION_2}"
+fi

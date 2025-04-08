@@ -14,5 +14,4 @@ jobs:
           fetch-depth: 0
       - name: Run survey repo script
         run: |
-          export
           ./ci/survey_repo.sh
