@@ -37,5 +37,3 @@ pytest tests/test_uploader.py
 # Run with verbose output
 pytest -v
 ```
-
-

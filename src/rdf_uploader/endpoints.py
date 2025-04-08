@@ -60,6 +60,7 @@ class EndpointStrategy(ABC):
             response.raise_for_status()
             return True, response.status_code
 
+
 class BlazegraphEndpoint(EndpointStrategy):
     def get_upload_url(self, graph: str | None = None) -> str:
         return f"{self.endpoint_url}/sparql"
@@ -124,6 +125,7 @@ class StardogEndpoint(EndpointStrategy):
 
     def get_params(self, graph: str | None = None) -> dict[str, str]:
         return {}
+
 
 def create_endpoint_strategy(
     endpoint_type: EndpointType,
@@ -194,7 +196,7 @@ class EndpointClient:
     @property
     def password(self) -> str | None:
         return self._password
-        
+
     @property
     def store_name(self) -> str:
         return self._store_name

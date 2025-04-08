@@ -49,7 +49,7 @@ def test_endpoint_client_init_with_store_name():
         store_name=custom_store,
     )
     assert client.store_name == custom_store
-    
+
     # Verify the store name is passed to the RDFox endpoint strategy
     assert isinstance(client.endpoint_strategy, RDFoxEndpoint)
     assert client.endpoint_strategy.store_name == custom_store
@@ -111,7 +111,12 @@ async def test_upload_data_blazegraph(
 
 @pytest.mark.asyncio()
 async def test_upload_data_rdfox(
-    sample_turtle_file, rdfox_endpoint, rdfox_username, rdfox_password, rdfox_enabled, rdfox_store_name
+    sample_turtle_file,
+    rdfox_endpoint,
+    rdfox_username,
+    rdfox_password,
+    rdfox_enabled,
+    rdfox_store_name,
 ):
     """Test uploading data to an RDFox endpoint."""
     if not rdfox_enabled:
