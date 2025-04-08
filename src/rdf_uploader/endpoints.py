@@ -162,11 +162,11 @@ class EndpointClient:
     ) -> None:
         self._endpoint_type = endpoint_type
         self._endpoint_url = endpoint_url
-        self._timeout = timeout
-        self._username = username
-        self._password = password
-        self._store_name = store_name
-        self.content_type = content_type
+        self._timeout: int = timeout
+        self._username: str | None = username
+        self._password: str | None = password
+        self._store_name: str | None = store_name
+        self.content_type: str | None = content_type
 
         self.endpoint_strategy = create_endpoint_strategy(
             endpoint_type=endpoint_type,
@@ -198,7 +198,7 @@ class EndpointClient:
         return self._password
 
     @property
-    def store_name(self) -> str:
+    def store_name(self) -> str | None:
         return self._store_name
 
     async def upload_data(

@@ -9,16 +9,6 @@ repos:
     hooks:
       - id: trailing-whitespace
       - id: mixed-line-ending
-        name: "Enforce LF newlines on most files"
-        args:
-          - "--fix=lf"
-        # Exclude files with "crlf" in their names.
-        exclude: "crlf"
-      - id: mixed-line-ending
-        name: "Enforce CRLF newlines on files named '*crlf*'"
-        args:
-          - "--fix=crlf"
-        files: "crlf"
       - id: end-of-file-fixer
       - id: fix-byte-order-marker
       - id: check-executables-have-shebangs
@@ -27,17 +17,9 @@ repos:
       - id: check-symlinks
       - id: check-case-conflict
       - id: check-docstring-first
-      - id: pretty-format-json
-        args:
-          - "--autofix"
-          - "--indent=2"
-          - "--no-sort-keys"
-          - "--no-ensure-ascii"
-        exclude: "invalid-syntax.json|tests/fake-repo-bad-json/cookiecutter.json|tests/fake-repo/cookiecutter.json"
       - id: check-toml
       - id: check-xml
       - id: check-yaml
-        exclude: "not_rendered.yml|invalid-config.yaml|invalid-config-w-multiple-docs.yaml"
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.5.0
