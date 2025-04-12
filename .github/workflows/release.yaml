@@ -16,6 +16,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Survey repo
+        id: survey-repo
         run: |
             ./ci/survey_repo.sh
       - name: Set up Python
