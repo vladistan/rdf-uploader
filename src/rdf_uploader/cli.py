@@ -9,8 +9,11 @@ import typer
 from rich.console import Console
 from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn
 
+from rdf_uploader.__about__ import VERSION
 from rdf_uploader.endpoints import EndpointType
 from rdf_uploader.uploader import upload_rdf_files
+
+
 
 app = typer.Typer(help="Upload RDF data to SPARQL endpoints")
 console = Console()
@@ -129,6 +132,11 @@ def upload(
 
         asyncio.run(run_upload())
 
+
+@app.command()
+def version() -> None:
+    """Print the version of the RDF Uploader."""
+    print(f"RDF Uploader {VERSION}")
 
 def main() -> None:
     """Entry point for the CLI."""

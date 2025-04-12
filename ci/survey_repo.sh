@@ -61,8 +61,8 @@ if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
     # Extract PR number from GITHUB_REF
     PR_NUMBER=$(echo $GITHUB_REF | sed -n 's/refs\/pull\/\([0-9]*\)\/merge/\1/p')
     if [ -n "$PR_NUMBER" ]; then
-        VERSION="${VERSION}-pr${PR_NUMBER}"
-        VERSION_2="${VERSION}-g${VCS_SHORT_HASH}"
+        VERSION="${VERSION}+pr${PR_NUMBER}"
+        VERSION_2="${VERSION}.g${VCS_SHORT_HASH}"
     fi
 fi
 
@@ -75,4 +75,12 @@ EOF
 
 if [ -n "$VERSION_2" ]; then
     echo "Extra Version   : ${VERSION_2}"
+fi
+
+if [ -n "$GITHUB_OUTPUT" ]; then
+    if [ -n "$VERSION_2" ]; then
+        echo "version=${VERSION_2}" >> $GITHUB_OUTPUT
+    else
+        echo "version=${VERSION}" >> $GITHUB_OUTPUT
+    fi
 fi
