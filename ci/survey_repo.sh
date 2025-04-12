@@ -67,9 +67,9 @@ if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
 fi
 
 cat <<EOF
-  /\_/\     Version   : ${VERSION} 
+  /\_/\     Version   : ${VERSION}
  ( o.o )    Commit    : ${VCS_SHORT_HASH}
-  > ^ <     
+  > ^ <
 
 EOF
 

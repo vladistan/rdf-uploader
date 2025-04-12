@@ -6,7 +6,7 @@ on:
       - main
     tags:
       - v0.*
-    
+
 jobs:
   point-release:
     runs-on: ubuntu-latest
@@ -23,11 +23,11 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.12.4'
-          cache: 'pip'      
+          cache: 'pip'
       - name: Install dependencies
         run: |
           pip install hatch uv
       - name: Build Python Package
         run: |
           echo "VERSION = \"${{ steps.survey-repo.outputs.version }}\"" > src/rdf_uploader/__about__.py
-          hatch build  
+          hatch build
