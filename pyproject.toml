@@ -4,7 +4,9 @@ build-backend = "hatchling.build"
 
 [project]
 name = "rdf-uploader"
-version = "0.1.0"
+dynamic = [
+    "version",
+]
 description = "A tool for uploading RDF data to SPARQL endpoints"
 readme = "README.md"
 license = "MIT"
@@ -58,10 +60,11 @@ fragments = [
   { path = "CHANGES.md" },
 ]
 
-
-
 [tool.hatch.version]
-source = "vcs"
+path = "src/rdf_uploader/__about__.py"
+
+[tool.hatch.version.raw-options]
+version_scheme = "no-guess-dev"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/rdf_uploader"]
