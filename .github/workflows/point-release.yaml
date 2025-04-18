@@ -6,6 +6,8 @@ on:
 jobs:
   point-release:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -27,3 +29,8 @@ jobs:
         run: |
           echo "VERSION = \"${{ steps.survey-repo.outputs.version }}\"" > src/rdf_uploader/__about__.py
           hatch build
+      - name: Upload to PyPI
+        env:
+          HATCH_INDEX_AUTH: "${{ secrets.HATCH_INDEX_AUTH }}"
+        run: |
+          hatch publish --user __token__
