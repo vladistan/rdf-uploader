@@ -27,6 +27,11 @@ jobs:
           echo "VERSION = \"${{ steps.survey-repo.outputs.version }}\"" > src/rdf_uploader/__about__.py
           pip install hatch uv
           hatch build
+      - name: Upload to PyPI
+        env:
+          HATCH_INDEX_AUTH: "${{ secrets.HATCH_INDEX_AUTH }}"
+        run: |
+          hatch publish --user __token__
   version-bump:
     runs-on: ubuntu-latest
     steps:
