@@ -1,40 +1,45 @@
-name: PR Build
+name: Build Package
 on:
-  pull_request:
-    branches:
-      - main
+  workflow_call:
 jobs:
-  pr-build:
+  build-package:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: Run survey repo script
+      - name: Survey repo
         id: survey-repo
         run: |
           ./ci/survey_repo.sh
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.12.4'
+          python-version: 3.12
           cache: 'pip'
-      - name: Install dependencies
-        run: |
-          pip install hatch uv
       - name: Build Python Package
         run: |
           echo "VERSION = \"${{ steps.survey-repo.outputs.version }}\"" > src/rdf_uploader/__about__.py
+          pip install uv hatch
           hatch build
-      - name: Upload Source Distribution
+      - name: Upload source distribution
+        if: github.event_name == 'pull_request'
         uses: actions/upload-artifact@v4
         with:
           name: python-package-sdist
           path: dist/*.tar.gz
           retention-days: 4
       - name: Upload Wheel Distribution
+        if: github.event_name == 'pull_request'
         uses: actions/upload-artifact@v4
         with:
           name: python-package-wheel
           path: dist/*.whl
           retention-days: 4
+      - name: Upload to PyPI
+        if: github.event_name != 'pull_request'
+        env:
+          HATCH_INDEX_AUTH: "${{ secrets.HATCH_INDEX_AUTH }}"
+        run: |
+          hatch publish --user __token__

@@ -1,0 +1,8 @@
+name: PR Build
+on:
+  pull_request:
+    branches:
+      - main
+jobs:
+  build-package:
+    uses: ./.github/workflows/build-package.yaml
