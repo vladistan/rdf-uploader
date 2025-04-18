@@ -7,31 +7,8 @@ permissions:
   contents: write
 jobs:
   minor-release:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Survey repo
-        id: survey-repo
-        run: |
-            ./ci/survey_repo.sh
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.12.4'
-          cache: 'pip'
-      - name: Build Python Package
-        run: |
-          echo "VERSION = \"${{ steps.survey-repo.outputs.version }}\"" > src/rdf_uploader/__about__.py
-          pip install hatch uv
-          hatch build
-      - name: Upload to PyPI
-        env:
-          HATCH_INDEX_AUTH: "${{ secrets.HATCH_INDEX_AUTH }}"
-        run: |
-          hatch publish --user __token__
+    uses: ./.github/workflows/build-package.yaml
+    secrets: inherit
   version-bump:
     runs-on: ubuntu-latest
     steps:
@@ -46,8 +23,8 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.12.4'
-          cache: 'pip'
+          python-version: 3.12
+          cache: pip
       - name: Version bump
         run: |
           echo "VERSION = \"${{ steps.survey-repo.outputs.version }}\"" > src/rdf_uploader/__about__.py
