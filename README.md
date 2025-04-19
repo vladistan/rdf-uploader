@@ -1,23 +1,22 @@
 # RDF Uploader
 
 
+
+Knowledge graph developers often need to work with various types of triple stores within the same projects. Each store has its own way of handling endpoints, authentication, and named graphs, which can complicate the upload process. RDF Uploader addresses this by offering a consistent interface for popular stores like MarkLogic, Blazegraph, Neptune, RDFox, and Stardog. Unlike typical RDFLib-based applications, such as those using RDFLib's `Graph` class that upload one triple at a time, RDF Uploader supports batch uploads and concurrency. This approach prevents server overload from large files, unlike using CURL, which might crash the server by dumping an entire multi-gigabyte file at once. Concurrency also boosts performance in clustered triple store environments by allowing multiple uploads simultaneously. While many stores offer high-throughput loading methods, these are often unique to each store and require direct server access to load from local files. RDF Uploader, using simple HTTP requests, avoids these complexities and dependencies, making it lightweight and easy to integrate into existing workflows, while eliminating the hassle of dealing with different endpoint implementations.
+
+![License MIT](https://img.shields.io/github/license/vladistan/rdf-uploader)
+
 ![Demo GIF](docs/images/demo.gif)
 
-
-
-When working with RDF data and multiple triple stores, it is common
-to need to upload knowledge graphs to different stores. Although
-most stores claim to be standards-based, there are two main standards:
-the Graph Store Protocol and SPARQL Update. However, there are
-nuances regarding exact URL endpoints, named graphs, and authentication,
-making it a pain to deal with multiple proprietary tools.
-
-Introducing `rdf_uploader`, a single tool that can upload RDF data
-to a variety of data sources. It is easy to use and has no dependencies
-on RDFLib or any datastore-specific libraries, relying solely on
-pure HTTP. With `rdf_uploader`, you can seamlessly upload your RDF
-data to different triple stores without the hassle of dealing with
-multiple tools and their quirks.
+## Table of Contents
+- [Features](#features)
+- [Installation & Quick Start](#installation--quick-start)
+- [Usage Guide](#usage-guide)
+- [Configuration](#configuration)
+- [Command Line Reference](#command-line-reference)
+- [Environment Variables](#environment-variables)
+- [Programmatic Usage](#programmatic-usage)
+- [License](#license)
 
 ## Features
 
@@ -25,136 +24,82 @@ multiple tools and their quirks.
 - Support for multiple RDF stores (MarkLogic, Blazegraph, Neptune, RDFox, and Stardog)
 - Authentication support for secure endpoints
 - Content type detection and customization
-- Clear status outputs after each upload operation
 - Concurrent uploads with configurable limits
+- Batching of RDF statements for efficient processing
+- Verbose output for detailed logging
+- Support for named graphs
 
-## Installation
 
-### From PyPI
+## Installation & Quick Start
 
+**Choose your preferred method:**
+
+### pip
 ```bash
 pip install rdf-uploader
+rdf-uploader file.ttl --endpoint http://localhost:3030/dataset/sparql
 ```
 
-## Usage
-
-### Basic Usage
-
-Upload a single RDF file to a SPARQL endpoint:
-
+### pipx (without permanent installation)
 ```bash
-rdf-uploader path/to/file.ttl --endpoint http://localhost:3030/dataset/sparql
+pipx run rdf-uploader upload file.ttl --endpoint http://localhost:3030/dataset/sparql
 ```
 
-You can also omit the endpoint URL and use environment variables:
-
+### Docker
 ```bash
-# Set the endpoint URL in an environment variable
+docker run -v $(pwd):/data vladistan/rdf-uploader:latest /data/file.ttl --endpoint http://localhost:3030/dataset/sparql
+```
+
+### With Environment Variables
+```bash
 export RDF_ENDPOINT=http://localhost:3030/dataset/sparql
-
-# Then run without the --endpoint parameter
-rdf-uploader path/to/file.ttl
+rdf-uploader file.ttl
 ```
 
-Or specify the endpoint type to use a type-specific environment variable:
-
+### With .envrc File
+Create `.envrc` with your configuration, then run:
 ```bash
-# Set endpoint-specific URL
-export MARKLOGIC_ENDPOINT=http://marklogic-server:8000/v1/graphs
+# .envrc file content
+export RDF_ENDPOINT="http://localhost:3030/dataset/sparql"
 
-# Use the endpoint type to determine which environment variable to use
-rdf-uploader path/to/file.ttl --type marklogic
+# Command to run
+rdf-uploader file.ttl
 ```
 
-### Programmatic Usage
+## Usage Guide
 
-You can also use the library programmatically in your Python code:
+### Basic Operations
 
-```python
-from pathlib import Path
-from rdf_uploader.uploader import upload_rdf_file
-from rdf_uploader.endpoints import EndpointType
-
-# The endpoint URL, username, and password can be provided directly
-# or read from environment variables if not specified
-await upload_rdf_file(
-    file_path=Path("path/to/file.ttl"),
-    endpoint="http://localhost:3030/dataset/sparql",
-    endpoint_type=EndpointType.GENERIC,
-    username="myuser",
-    password="mypass"
-)
-
-# Using environment variables
-# export RDF_ENDPOINT=http://localhost:3030/dataset/sparql
-# export RDF_USERNAME=myuser
-# export RDF_PASSWORD=mypass
-await upload_rdf_file(
-    file_path=Path("path/to/file.ttl"),
-    endpoint_type=EndpointType.GENERIC
-)
-```
-
-### Multiple Files
-
-Upload multiple RDF files:
-
+**Upload a single file:**
 ```bash
-rdf-uploader upload path/to/file1.ttl path/to/file2.n3 --endpoint http://localhost:3030/dataset/sparql
+rdf-uploader file.ttl --endpoint http://localhost:3030/dataset/sparql
 ```
 
-### Specify Endpoint Type
-
+**Upload multiple files:**
 ```bash
-rdf-uploader upload path/to/file.ttl --endpoint http://localhost:3030/dataset/sparql --type fuseki
+rdf-uploader file1.ttl file2.n3 --endpoint http://localhost:3030/dataset/sparql
 ```
 
-Available endpoint types:
-- `marklogic`
-- `neptune`
-- `blazegraph`
-- `rdfox`
-- `stardog`
-
-### Specify Named Graph
-
+**Use a named graph:**
 ```bash
-rdf-uploader upload path/to/file.ttl --endpoint http://localhost:3030/dataset/sparql --graph http://example.org/graph
+rdf-uploader file.ttl --endpoint http://localhost:3030/dataset/sparql --graph http://example.org/graph
 ```
 
 ### Authentication
 
-For endpoints that require authentication:
-
+**With credentials:**
 ```bash
-rdf-uploader upload path/to/file.ttl --endpoint http://localhost:3030/dataset/sparql --username myuser --password mypass
+rdf-uploader file.ttl --endpoint http://localhost:3030/dataset/sparql --username myuser --password mypass
 ```
 
-You can also set authentication credentials using environment variables:
+### Content Types & Format
 
+**Explicitly specify content type:**
 ```bash
-export RDF_USERNAME=myuser
-export RDF_PASSWORD=mypass
-rdf-uploader upload path/to/file.ttl --endpoint http://localhost:3030/dataset/sparql
+rdf-uploader file.ttl --content-type "text/turtle"
 ```
 
-For endpoint-specific credentials, use the endpoint type as a prefix:
-
-```bash
-export MARKLOGIC_USERNAME=mluser
-export MARKLOGIC_PASSWORD=mlpass
-rdf-uploader upload path/to/file.ttl --endpoint http://marklogic-server:8000/v1/graphs --type marklogic
-```
-
-### Content Type
-
-Specify the content type for the RDF data:
-
-```bash
-rdf-uploader upload path/to/file.ttl --endpoint http://localhost:3030/dataset/sparql --content-type "text/turtle"
-```
-
-If not specified, the content type is automatically detected based on the file extension:
+**Supported formats** (auto-detected by extension):
 - `.ttl`, `.turtle`: `text/turtle`
 - `.nt`: `application/n-triples`
 - `.n3`: `text/n3`
@@ -164,85 +109,153 @@ If not specified, the content type is automatically detected based on the file e
 - `.json`: `application/rdf+json`
 - `.trig`: `application/trig`
 
-### Control Concurrency
+### Performance Options
 
-Limit the number of concurrent uploads:
+**Control concurrency:**
+The `--concurrent` option allows you to specify the number of concurrent upload operations. For example, using `--concurrent 10` will enable the uploader to process up to 10 files simultaneously, which can significantly speed up the upload process when dealing with multiple files.
 
 ```bash
-rdf-uploader upload path/to/*.ttl --endpoint http://localhost:3030/dataset/sparql --concurrent 10
+rdf-uploader *.ttl --concurrent 10
 ```
 
-### Verbose Mode
-
-Enable verbose output to see detailed information about each batch
-upload, including the number of triples per batch and server response
-codes:
+**Enable verbose output:**
+The `--verbose` option provides detailed output during the upload process. This can be useful for debugging or monitoring the progress of the upload, as it will display additional information about each step the uploader takes.
 
 ```bash
-rdf-uploader upload path/to/file.ttl --endpoint http://localhost:3030/dataset/sparql --verbose
+rdf-uploader file.ttl --verbose
 ```
 
-### Help
-
-Get help on available commands and options:
+**Set batch size:**
+The `--batch-size` option lets you define the number of RDF statements to be included in each batch during the upload. For instance, `--batch-size 5000` will group the RDF data into batches of 5000 statements, which can help manage memory usage and optimize performance for large datasets.
 
 ```bash
-rdf-uploader --help
-rdf-uploader upload --help
+rdf-uploader file.ttl --batch-size 5000
 ```
 
+## Configuration
 
-### Environment Variables
+RDF Uploader offers three ways to configure parameters, with the following priority:
 
-You can configure the RDF Uploader using environment variables, which is especially useful for CI/CD pipelines or when working with multiple endpoints. The library also supports reading values from a `.envrc` file in the current working directory if environment variables are not set:
+1. **Command-line arguments** (highest priority)
+2. **Environment variables** (checked if CLI args not provided)
+3. **.envrc file** (checked if environment variables not set)
 
-#### Endpoint URLs
+### Endpoint Types
+
+The tool supports these endpoints with optimized handling:
+
+- `marklogic`
+- `neptune`
+- `blazegraph`
+- `rdfox`
+- `stardog`
+- `generic` (default)
+
+Specify the endpoint type:
+```bash
+rdf-uploader file.ttl --type stardog
+```
+
+### Endpoint-specific Variables
+
+When an endpoint type is specified, type-specific variables take precedence:
 
 ```bash
-# Generic endpoint URL
+# Generic endpoint (fallback)
 export RDF_ENDPOINT=http://localhost:3030/dataset/sparql
 
-# Endpoint-specific URLs
+# Type-specific endpoint (takes precedence when --type marklogic is used)
 export MARKLOGIC_ENDPOINT=http://marklogic-server:8000/v1/graphs
-export NEPTUNE_ENDPOINT=https://your-neptune-instance.amazonaws.com:8182/sparql
-export BLAZEGRAPH_ENDPOINT=http://blazegraph-server:9999/blazegraph/sparql
-export RDFOX_ENDPOINT=http://rdfox-server:12110/datastores/default/content
-export STARDOG_ENDPOINT=https://your-stardog-instance:5820/database
 ```
 
-#### Authentication
+## Command Line Reference
+
+### Basic Syntax
 
 ```bash
-# Generic credentials
+rdf-uploader [OPTIONS] FILES...
+```
+
+### Options Reference
+
+| Category | Option | Short | Description | Default |
+|----------|--------|-------|-------------|---------|
+| **Files** | `FILES...` | | One or more RDF files to upload | (required) |
+| **Endpoint** | `--endpoint` | `-e` | SPARQL endpoint URL | (required) |
+| | `--type` | `-t` | Endpoint type | `generic` |
+| | `--graph` | `-g` | Named graph to upload to | Default graph |
+| | `--store-name` | `-s` | RDFox datastore name | (required for RDFox) |
+| **Auth** | `--username` | `-u` | Username | |
+| | `--password` | `-p` | Password | |
+| **Content** | `--content-type` | | Content type for RDF data | Auto-detected |
+| **Performance** | `--concurrent` | `-c` | Max concurrent uploads | 5 |
+| | `--batch-size` | `-b` | Triples per batch | 1000 |
+| **Output** | `--verbose` | `-v` | Enable detailed output | `False` |
+
+## Environment Variables
+
+### General Configuration
+
+```bash
+# Generic endpoint URL and auth
+export RDF_ENDPOINT=http://localhost:3030/dataset/sparql
 export RDF_USERNAME=myuser
 export RDF_PASSWORD=mypass
+```
 
-# Endpoint-specific credentials
+### Endpoint-specific Configuration
+
+```bash
+# MarkLogic
+export MARKLOGIC_ENDPOINT=http://marklogic-server:8000/v1/graphs
 export MARKLOGIC_USERNAME=mluser
 export MARKLOGIC_PASSWORD=mlpass
+
+# Neptune
+export NEPTUNE_ENDPOINT=https://your-neptune-instance.amazonaws.com:8182/sparql
 export NEPTUNE_USERNAME=neptuneuser
 export NEPTUNE_PASSWORD=neptunepass
+
+# Blazegraph
+export BLAZEGRAPH_ENDPOINT=http://blazegraph-server:9999/blazegraph/sparql
 export BLAZEGRAPH_USERNAME=bguser
 export BLAZEGRAPH_PASSWORD=bgpass
+
+# RDFox
+export RDFOX_ENDPOINT=http://rdfox-server:12110/datastores/default/content
 export RDFOX_USERNAME=rdfoxuser
 export RDFOX_PASSWORD=rdfoxpass
+export RDFOX_STORE_NAME=mystore
+
+# Stardog
+export STARDOG_ENDPOINT=https://your-stardog-instance:5820/database
 export STARDOG_USERNAME=sduser
 export STARDOG_PASSWORD=sdpass
 ```
 
-#### RDFox Store Name
+## Programmatic Usage
 
-```bash
-export RDFOX_STORE_NAME=mystore
-```
+Use the library in your Python code:
 
-### Test Configuration
+```python
+from pathlib import Path
+from rdf_uploader.uploader import upload_rdf_file
+from rdf_uploader.endpoints import EndpointType
 
-Tests use a local SPARQL endpoint by default. You can configure the test endpoint by setting environment variables:
+# With explicit parameters
+await upload_rdf_file(
+    file_path=Path("file.ttl"),
+    endpoint="http://localhost:3030/dataset/sparql",
+    endpoint_type=EndpointType.GENERIC,
+    username="myuser",
+    password="mypass"
+)
 
-```bash
-export TEST_ENDPOINT_URL=http://localhost:3030/test
-export TEST_ENDPOINT_TYPE=fuseki
+# Using environment variables
+await upload_rdf_file(
+    file_path=Path("file.ttl"),
+    endpoint_type=EndpointType.GENERIC
+)
 ```
 
 ## License
