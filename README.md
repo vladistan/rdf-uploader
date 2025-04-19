@@ -1,8 +1,23 @@
 # RDF Uploader
 
-When working with RDF data and multiple triple stores, it is common to need to upload knowledge graphs to different stores. Although most stores claim to be standards-based, there are two main standards: the Graph Store Protocol and SPARQL Update. However, there are nuances regarding exact URL endpoints, named graphs, and authentication, making it a pain to deal with multiple proprietary tools.
 
-Introducing `rdf_uploader`, a single tool that can upload RDF data to a variety of data sources. It is easy to use and has no dependencies on RDFLib or any datastore-specific libraries, relying solely on pure HTTP. With `rdf_uploader`, you can seamlessly upload your RDF data to different triple stores without the hassle of dealing with multiple tools and their quirks.
+![Demo GIF](docs/images/demo.gif)
+
+
+
+When working with RDF data and multiple triple stores, it is common
+to need to upload knowledge graphs to different stores. Although
+most stores claim to be standards-based, there are two main standards:
+the Graph Store Protocol and SPARQL Update. However, there are
+nuances regarding exact URL endpoints, named graphs, and authentication,
+making it a pain to deal with multiple proprietary tools.
+
+Introducing `rdf_uploader`, a single tool that can upload RDF data
+to a variety of data sources. It is easy to use and has no dependencies
+on RDFLib or any datastore-specific libraries, relying solely on
+pure HTTP. With `rdf_uploader`, you can seamlessly upload your RDF
+data to different triple stores without the hassle of dealing with
+multiple tools and their quirks.
 
 ## Features
 
@@ -159,7 +174,9 @@ rdf-uploader upload path/to/*.ttl --endpoint http://localhost:3030/dataset/sparq
 
 ### Verbose Mode
 
-Enable verbose output to see detailed information about each batch upload, including the number of triples per batch and server response codes:
+Enable verbose output to see detailed information about each batch
+upload, including the number of triples per batch and server response
+codes:
 
 ```bash
 rdf-uploader upload path/to/file.ttl --endpoint http://localhost:3030/dataset/sparql --verbose
