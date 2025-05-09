@@ -45,6 +45,24 @@ rdf-uploader file.ttl --endpoint http://localhost:3030/dataset/sparql
 pipx run rdf-uploader upload file.ttl --endpoint http://localhost:3030/dataset/sparql
 ```
 
+### Homebrew
+
+The homebrew forumual for `rdf-uploader` lives in the private tap `vladistan/homebrew-gizmos` 
+This separate tap is required because the package is still new and hasnt yet met the popularity and 
+stability thresholds for inclusion in `homebrew-core`. Use the following commands to install it
+from the private tap.
+
+
+```bash
+brew tap vladistan/homebrew-gizmos
+brew install rdf-uploader
+
+# Quick test
+rdf-uploader file.ttl --endpoint http://localhost:3030/dataset/sparql
+```
+
+
+
 ### Docker
 ```bash
 docker run -v $(pwd):/data vladistan/rdf-uploader:latest /data/file.ttl --endpoint http://localhost:3030/dataset/sparql
