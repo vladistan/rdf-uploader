@@ -1,12 +1,23 @@
 # RDF Uploader
 
+A tool for uploading RDF data to different types of triple stores
+with consistent behavior across different endpoint types.
+
+
+<img src="http://r1.v-lad.org/images/demo.gif" alt="Demo GIF">
+
+
+[![PyPI - Version](https://img.shields.io/pypi/v/rdf-uploader)](https://pypi.org/project/rdf-uploader/)
+[![Docker Image Version (latest by date)](https://img.shields.io/docker/v/vladistan/rdf-uploader?label=docker)](https://hub.docker.com/r/vladistan/rdf-uploader)
+![Tests](https://github.com/vladistan/rdf-uploader/actions/workflows/ci.yaml/badge.svg?event=push&branch=main)
+[![codecov](https://codecov.io/github/vladistan/rdf-uploader/graph/badge.svg?token=KGUVQW05BC)](https://codecov.io/github/vladistan/rdf-uploader)
+[![Python Version](https://img.shields.io/pypi/pyversions/rdf-uploader)](https://pypi.org/project/rdf-uploader/)
+[![License MIT](https://img.shields.io/github/license/vladistan/rdf-uploader)](https://github.com/vladistan/rdf-uploader/blob/main/LICENSE)
 
 
 Knowledge graph developers often need to work with various types of triple stores within the same projects. Each store has its own way of handling endpoints, authentication, and named graphs, which can complicate the upload process. RDF Uploader addresses this by offering a consistent interface for popular stores like MarkLogic, Blazegraph, Neptune, RDFox, and Stardog. Unlike typical RDFLib-based applications, such as those using RDFLib's `Graph` class that upload one triple at a time, RDF Uploader supports batch uploads and concurrency. This approach prevents server overload from large files, unlike using CURL, which might crash the server by dumping an entire multi-gigabyte file at once. Concurrency also boosts performance in clustered triple store environments by allowing multiple uploads simultaneously. While many stores offer high-throughput loading methods, these are often unique to each store and require direct server access to load from local files. RDF Uploader, using simple HTTP requests, avoids these complexities and dependencies, making it lightweight and easy to integrate into existing workflows, while eliminating the hassle of dealing with different endpoint implementations.
 
-![License MIT](https://img.shields.io/github/license/vladistan/rdf-uploader)
 
-![Demo GIF](docs/images/demo.gif)
 
 ## Table of Contents
 - [Features](#features)
@@ -47,8 +58,8 @@ pipx run rdf-uploader upload file.ttl --endpoint http://localhost:3030/dataset/s
 
 ### Homebrew
 
-The homebrew forumual for `rdf-uploader` lives in the private tap `vladistan/homebrew-gizmos` 
-This separate tap is required because the package is still new and hasnt yet met the popularity and 
+The homebrew forumual for `rdf-uploader` lives in the private tap `vladistan/homebrew-gizmos`
+This separate tap is required because the package is still new and hasnt yet met the popularity and
 stability thresholds for inclusion in `homebrew-core`. Use the following commands to install it
 from the private tap.
 
