@@ -3,8 +3,7 @@
 A tool for uploading RDF data to different types of triple stores
 with consistent behavior across different endpoint types.
 
-
-<img src="http://r1.v-lad.org/images/demo.gif" alt="Demo GIF">
+![RDF Uploader Demo](docs/images/demo.gif)
 
 
 [![PyPI - Version](https://img.shields.io/pypi/v/rdf-uploader)](https://pypi.org/project/rdf-uploader/)
@@ -15,7 +14,25 @@ with consistent behavior across different endpoint types.
 [![License MIT](https://img.shields.io/github/license/vladistan/rdf-uploader)](https://github.com/vladistan/rdf-uploader/blob/main/LICENSE)
 
 
-Knowledge graph developers often need to work with various types of triple stores within the same projects. Each store has its own way of handling endpoints, authentication, and named graphs, which can complicate the upload process. RDF Uploader addresses this by offering a consistent interface for popular stores like MarkLogic, Blazegraph, Neptune, RDFox, and Stardog. Unlike typical RDFLib-based applications, such as those using RDFLib's `Graph` class that upload one triple at a time, RDF Uploader supports batch uploads and concurrency. This approach prevents server overload from large files, unlike using CURL, which might crash the server by dumping an entire multi-gigabyte file at once. Concurrency also boosts performance in clustered triple store environments by allowing multiple uploads simultaneously. While many stores offer high-throughput loading methods, these are often unique to each store and require direct server access to load from local files. RDF Uploader, using simple HTTP requests, avoids these complexities and dependencies, making it lightweight and easy to integrate into existing workflows, while eliminating the hassle of dealing with different endpoint implementations.
+Knowledge graph developers often need to work with various types
+of triple stores within the same projects. Each store has its own
+way of handling endpoints, authentication, and named graphs, which
+can complicate the upload process. RDF Uploader addresses this by
+offering a consistent interface for popular stores like MarkLogic,
+Blazegraph, Neptune, RDFox, and Stardog. Unlike typical RDFLib-based
+applications, such as those using RDFLib's `Graph` class that upload
+one triple at a time, RDF Uploader supports batch uploads and
+concurrency. This approach prevents server overload from large
+files, unlike using CURL, which might crash the server by dumping
+an entire multi-gigabyte file at once. Concurrency also boosts
+performance in clustered triple store environments by allowing
+multiple uploads simultaneously. While many stores offer high-throughput
+loading methods, these are often unique to each store and require
+direct server access to load from local files. RDF Uploader, using
+simple HTTP requests, avoids these complexities and dependencies,
+making it lightweight and easy to integrate into existing workflows,
+while eliminating the hassle of dealing with different endpoint
+implementations.
 
 
 
@@ -58,7 +75,7 @@ pipx run rdf-uploader upload file.ttl --endpoint http://localhost:3030/dataset/s
 
 ### Homebrew
 
-The homebrew forumual for `rdf-uploader` lives in the private tap `vladistan/homebrew-gizmos`
+The homebrew formula for `rdf-uploader` lives in the private tap `vladistan/homebrew-gizmos`
 This separate tap is required because the package is still new and hasnt yet met the popularity and
 stability thresholds for inclusion in `homebrew-core`. Use the following commands to install it
 from the private tap.
@@ -141,13 +158,20 @@ rdf-uploader file.ttl --content-type "text/turtle"
 ### Performance Options
 
 **Control concurrency:**
-The `--concurrent` option allows you to specify the number of concurrent upload operations. For example, using `--concurrent 10` will enable the uploader to process up to 10 files simultaneously, which can significantly speed up the upload process when dealing with multiple files.
+
+The `--concurrent` option allows you to specify the number of
+concurrent upload operations. For example, using `--concurrent 10`
+will enable the uploader to process up to 10 files simultaneously,
+which can significantly speed up the upload process when dealing
+with multiple files.
 
 ```bash
 rdf-uploader *.ttl --concurrent 10
 ```
 
 **Enable verbose output:**
+
+
 The `--verbose` option provides detailed output during the upload process. This can be useful for debugging or monitoring the progress of the upload, as it will display additional information about each step the uploader takes.
 
 ```bash
@@ -155,7 +179,12 @@ rdf-uploader file.ttl --verbose
 ```
 
 **Set batch size:**
-The `--batch-size` option lets you define the number of RDF statements to be included in each batch during the upload. For instance, `--batch-size 5000` will group the RDF data into batches of 5000 statements, which can help manage memory usage and optimize performance for large datasets.
+
+The `--batch-size` option lets you define the number of RDF statements
+to be included in each batch during the upload. For instance,
+`--batch-size 5000` will group the RDF data into batches of 5000
+statements, which can help manage memory usage and optimize performance
+for large datasets.
 
 ```bash
 rdf-uploader file.ttl --batch-size 5000
@@ -163,7 +192,8 @@ rdf-uploader file.ttl --batch-size 5000
 
 ## Configuration
 
-RDF Uploader offers three ways to configure parameters, with the following priority:
+RDF Uploader offers three ways to configure parameters, with the
+following priority:
 
 1. **Command-line arguments** (highest priority)
 2. **Environment variables** (checked if CLI args not provided)
@@ -187,7 +217,8 @@ rdf-uploader file.ttl --type stardog
 
 ### Endpoint-specific Variables
 
-When an endpoint type is specified, type-specific variables take precedence:
+When an endpoint type is specified, type-specific variables take
+precedence:
 
 ```bash
 # Generic endpoint (fallback)
