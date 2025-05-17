@@ -67,16 +67,16 @@ to do it.
     so it will usually work with any triple store. However, it is
     the slowest option. The simplest usage pattern is easy to write;
     however, calling [`store.update`](https://rdflib.readthedocs.io/en/stable/apidocs/rdflib.plugins.stores.html#rdflib.plugins.stores.memory.Memory.update) in a loop for one triple at a time is
-    painfully inefficient. Stores like [AWS Neptune](https://aws.amazon.com/neptune/) 
+    painfully inefficient. Stores like [AWS Neptune](https://aws.amazon.com/neptune/)
     take roughly the same time to ingest a single triple as they do a batch of a
     thousand, and the difference is even greater with high-performance
     engines such as RDFox.
 
   - Use proprietary method recommended by the store.
-  
+
     Most triple stores implement their own proprietary bulk-loading tools, and they’re usually far
     faster than looping over RDFLib’s `store.update`. The catch is that every vendor does it
-    differently. AWS Neptune, for example, [ingests data from an S3 bucket](https://docs.aws.amazon.com/neptune/latest/userguide/bulk-load.html), while 
+    differently. AWS Neptune, for example, [ingests data from an S3 bucket](https://docs.aws.amazon.com/neptune/latest/userguide/bulk-load.html), while
     Blazegraph expects a file that already lives on the [server's local disk](https://github.com/blazegraph/database/wiki/Bulk_Data_Load).
 
     When your project has to target several stores at once, juggling these loader-specific
@@ -84,28 +84,28 @@ to do it.
     uploading to S3 or copying them onto the server—and each path requires additional permissions
     for developers and CI pipelines. In many organizations, granting that level of access simply
     isn’t feasible.
-	 
+
   - Use CURL to post data to a bulk endpoint
-  
+
 	Almost all triple stores provide an HTTP endpoint for bulk loading data.  Either via standard
-	[Graph Store Protocol](https://www.w3.org/TR/sparql11-http-rdf-update/) or 
+	[Graph Store Protocol](https://www.w3.org/TR/sparql11-http-rdf-update/) or
     through some proprietary means like [Stardog's CLI](https://docs.stardog.com/operating-stardog/database-administration/adding-data#adding-data-via-the-cli).   This method is performant and doesn't
 	require setting up any special access.  However,  there are a few challenges to this method as
 	well.  First, the actual implementation of the endpoint is different for different stores. Some
-	support the standard protocols, some implement their own.  Second, using CURL implies loading 
+	support the standard protocols, some implement their own.  Second, using CURL implies loading
 	all the data in a single transaction.  This is OK when the dataset is rather small, but all the
 	stores have a limit of how much data they could receive at a time.  For some stores this limit
 	is pretty large, but nevertheless it is always finite and always much smaller that the limit
 	of the number of triples the store can handle.  Also, if an error occurs during the batch upload
 	of a very large data block the entire transaction has to be repeated.
-	
+
 	The later limitation can be mitigated by splitting the dataset into smaller parts and posting them
 	to the triple store separately.  But this has to be done either manually through tedious and
 	error prone process, or by developing a complex program to automate the splitting.
-	
-	
+
+
 To make the data loading experience less annoying, I created this tool.
-It combines the advantages of the above methods while eliminating their downsides.	
+It combines the advantages of the above methods while eliminating their downsides.
 
 
 ## Features
@@ -180,7 +180,7 @@ rdf-uploader file.ttl
 
 **Upload a single file:**
 
-To upload a single file just specify it's name, endpoint URL and the 
+To upload a single file just specify it's name, endpoint URL and the
 endpoint type
 
 ```bash
@@ -229,7 +229,7 @@ or environment variables (see below)
 Normally, the tool tries to determine the content type of the file.
 Below is the list of recognized content types and extensions.
 
-**Supported formats** 
+**Supported formats**
 
 - `.ttl`, `.turtle`: `text/turtle`
 - `.nt`: `application/n-triples`
