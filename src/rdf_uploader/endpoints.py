@@ -97,21 +97,21 @@ class MarkLogicEndpoint(EndpointStrategy):
         Returns None if conversion fails.
         """
         from rdflib import Graph
-        
+
         try:
             # Add missing SKOS prefix if needed
             if "skos:" in turtle_data and "@prefix skos:" not in turtle_data:
                 skos_prefix = "@prefix skos: <http://www.w3.org/2004/02/skos/core#> .\n"
                 turtle_data = skos_prefix + turtle_data
-                
+
             g = Graph()
             g.parse(data=turtle_data, format="turtle")
             nt_data = g.serialize(format="nt")
-            
+
             if isinstance(nt_data, bytes):
-                return nt_data.decode('utf-8')
+                return nt_data.decode("utf-8")
             return nt_data
-            
+
         except Exception as e:
             print(f"Error: Turtle to N-Triples conversion failed: {e}")
             return None
@@ -126,10 +126,12 @@ class MarkLogicEndpoint(EndpointStrategy):
         if content_type == "text/turtle":
             converted_data = self._convert_turtle_to_ntriples(data)
             if converted_data is None:
-                raise ValueError("Failed to convert Turtle format to N-Triples. File may contain invalid Turtle syntax.")
+                raise ValueError(
+                    "Failed to convert Turtle format to N-Triples. File may contain invalid Turtle syntax."
+                )
             data = converted_data
             content_type = "application/n-triples"
-        
+
         url = self.get_upload_url(graph)
         params = self.get_params(graph)
         headers = {"Content-Type": content_type}
