@@ -79,15 +79,71 @@ class MarkLogicEndpoint(EndpointStrategy):
         base_url = f"{self.endpoint_url}/v1/graphs"
         if graph:
             return f"{base_url}?graph={graph}"
-        return f"{base_url}?default"
+        return base_url
 
     def get_params(self, graph: str | None = None) -> dict[str, str]:
+        if not graph:
+            return {"default": ""}
         return {}
 
     def get_auth(self) -> httpx.Auth | None:
         if not (self.username and self.password):
             return None
         return httpx.DigestAuth(self.username, self.password)
+
+    def _convert_turtle_to_ntriples(self, turtle_data: str) -> str | None:
+        """
+        Convert Turtle format to N-Triples for MarkLogic compatibility.
+        Returns None if conversion fails.
+        """
+        from rdflib import Graph
+        
+        try:
+            # Add missing SKOS prefix if needed
+            if "skos:" in turtle_data and "@prefix skos:" not in turtle_data:
+                skos_prefix = "@prefix skos: <http://www.w3.org/2004/02/skos/core#> .\n"
+                turtle_data = skos_prefix + turtle_data
+                
+            g = Graph()
+            g.parse(data=turtle_data, format="turtle")
+            nt_data = g.serialize(format="nt")
+            
+            if isinstance(nt_data, bytes):
+                return nt_data.decode('utf-8')
+            return nt_data
+            
+        except Exception as e:
+            print(f"Error: Turtle to N-Triples conversion failed: {e}")
+            return None
+
+    async def upload(
+        self,
+        data: str,
+        graph: str | None = None,
+        content_type: str = "text/turtle",
+    ) -> tuple[bool, int]:
+        # Convert Turtle to N-Triples for MarkLogic compatibility
+        if content_type == "text/turtle":
+            converted_data = self._convert_turtle_to_ntriples(data)
+            if converted_data is None:
+                raise ValueError("Failed to convert Turtle format to N-Triples. File may contain invalid Turtle syntax.")
+            data = converted_data
+            content_type = "application/n-triples"
+        
+        url = self.get_upload_url(graph)
+        params = self.get_params(graph)
+        headers = {"Content-Type": content_type}
+        auth = self.get_auth()
+
+        async with httpx.AsyncClient(timeout=self.timeout, auth=auth) as client:
+            response = await client.post(
+                url,
+                params=params,
+                content=data,
+                headers=headers,
+            )
+            response.raise_for_status()
+            return True, response.status_code
 
 
 class NeptuneEndpoint(EndpointStrategy):

@@ -35,6 +35,7 @@ dependencies = [
     "typer>=0.9.0",
     "httpx>=0.25.0",
     "rich>=13.5.0",
+    "rdflib>=7.0.0",
 ]
 
 [project.optional-dependencies]
