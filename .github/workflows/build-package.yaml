@@ -27,14 +27,14 @@ jobs:
           hatch build
       - name: Upload source distribution
         if: github.event_name == 'pull_request'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: python-package-sdist
           path: dist/*.tar.gz
           retention-days: 4
       - name: Upload Wheel Distribution
         if: github.event_name == 'pull_request'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: python-package-wheel
           path: dist/*.whl
