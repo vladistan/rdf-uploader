@@ -72,6 +72,9 @@ version_scheme = "no-guess-dev"
 packages = ["src/rdf_uploader"]
 
 
+[tool.codespell]
+ignore-words-list = "gastly"
+
 [tool.ruff]
 target-version = "py311"
 line-length = 88

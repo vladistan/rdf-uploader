@@ -138,7 +138,7 @@ pipx run rdf-uploader upload file.ttl --endpoint http://localhost:3030/dataset/s
 ### Homebrew
 
 The homebrew formula for `rdf-uploader` lives in the private tap `vladistan/homebrew-gizmos`
-This separate tap is required because the package is still new and hasnt yet met the popularity and
+This separate tap is required because the package is still new and hasn't yet met the popularity and
 stability thresholds for inclusion in `homebrew-core`. Use the following commands to install it
 from the private tap.
 
