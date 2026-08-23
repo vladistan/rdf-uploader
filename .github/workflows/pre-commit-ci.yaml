@@ -24,6 +24,6 @@ jobs:
       - uses: pre-commit/action@v3.0.1
         with:
           extra_args: --all-files --verbose
-      - uses: hadolint/hadolint-action@v3.1.0
+      - uses: hadolint/hadolint-action@v3.3.0
         with:
           dockerfile: Dockerfile
